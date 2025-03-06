@@ -28,7 +28,7 @@ jobs:
         with:
           toolchain: stable
       - run: |
-          cd dovi_tool
+          cd dovi_tool/dolby_vision
           cargo install cargo-c
           cargo cinstall --release
           cd ~
