@@ -16,24 +16,30 @@ jobs:
         with:
           owner: 'quietvoid'
           repository: 'dovi_tool'
-
-      - name: Clone HDR10+
-        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
-        with:
-          owner: 'quietvoid'
-          repository: 'hdr10plus_tool'
           
-      - name: Compile Cargo
-        uses: actions-rs/toolchain@v1
+      - name: Compile DOVI
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
       - run: |
           cd dovi_tool/dolby_vision
           cargo install cargo-c
           sudo -E env PATH=$PATH cargo cinstall --release
-          cd ~
+
+      - name: Clone HDR10+
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          owner: 'quietvoid'
+          repository: 'hdr10plus_tool'
+
+      - name: Compile HDR10+
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - run: |
           cd hdr10plus_tool
           cargo install --path .
+          
       - uses: actions/checkout@v4
       - uses: ilammy/setup-nasm@v1
       - run: git fetch --prune --unshallow
