@@ -58,3 +58,8 @@ jobs:
         cmake -B Build -A "${{ matrix.config.msvc_arch }}" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON
         cmake --build Build --config Release
       shell: cmd
+    - name: Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SvtAv1EncApp
+        path: /home/runner/work/svt-av1-psy/svt-av1-psy/Bin/Release/SvtAv1EncApp
