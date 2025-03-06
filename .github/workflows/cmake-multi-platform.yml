@@ -31,6 +31,7 @@ jobs:
         with:
           owner: 'yeslogic'
           repository: 'fontconfig-rs'
+          branch: 'master'
 
       - name: Compile fontconfig
         uses: dtolnay/rust-toolchain@stable
