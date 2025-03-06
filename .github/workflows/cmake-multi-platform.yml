@@ -34,12 +34,6 @@ jobs:
           cd dovi_tool/dolby_vision
           sudo -E env PATH=$PATH cargo cinstall --release
 
-      - name: Compile fontconfig
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-      - run: cargo install fontconfig
-
       - name: Clone HDR10+
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
         with:
@@ -52,6 +46,7 @@ jobs:
           toolchain: stable
       - run: |
           cd hdr10plus_tool
+          cargo add fontconfig
           cargo build --release
           sudo cp /home/runner/work/svt-av1-psy/svt-av1-psy/hdr10plus_tool/target/release/hdr10plus_tool /usr/local/bin
           
