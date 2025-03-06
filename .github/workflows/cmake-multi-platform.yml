@@ -44,13 +44,13 @@ jobs:
       CMAKE_GENERATOR: "${{ matrix.config.generators }}"
     steps:
       - name: DOVI
-        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
-          with:
-            depth: 1
-            branch: 'main'
-            owner: 'quietvoid'
-            repository: 'dovi_tool'
-          run: cd dovi_tool
+          uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+            with:
+              depth: 1
+              branch: 'main'
+              owner: 'quietvoid'
+              repository: 'dovi_tool'
+            run: cd dovi_tool
       - name: cargo-c
           uses: actions-rs/toolchain@v1
             with:
