@@ -45,11 +45,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: ilammy/setup-nasm@v1
-    - name: cargo-c
-      - uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
-      - run: cargo install cargo-c
     - name: DOVI
       - uses: GuillaumeFalourd/clone-github-repo-action@v2.3
           with:
@@ -58,7 +53,13 @@ jobs:
             owner: 'quietvoid'
             repository: 'dovi_tool'
       - run: cd dovi_tool
-      - run: cargo cinstall --release
+    - name: cargo-c
+      - uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+      - run: |
+          cargo install cargo-c
+          cargo cinstall --release
     - run: git fetch --prune --unshallow
     - name: Ubuntu/Mac OS X
       if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
