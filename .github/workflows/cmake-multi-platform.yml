@@ -11,24 +11,22 @@ jobs:
     name: Ubuntu (Clang)
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/setup-nasm@v1
+      
       - name: Clone DOVI
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
         with:
           owner: 'quietvoid'
           repository: 'dovi_tool'
           
-      - name: Compile cargo-c
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-      - run: cargo install cargo-c
-
       - name: Compile DOVI
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
       - run: |
           cd dovi_tool/dolby_vision
+          cargo install cargo-c
           sudo -E env PATH=$PATH cargo cinstall --release
 
       - name: Clone fontconfig
@@ -43,9 +41,9 @@ jobs:
         with:
           toolchain: stable
       - run: |
-          cd fontconfig-rs
           sudo apt install libfontconfig1-dev
-          cargo build --release
+          cd fontconfig-rs
+          cargo install --path .
 
       - name: Clone HDR10+
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
@@ -59,10 +57,8 @@ jobs:
           toolchain: stable
       - run: |
           cd hdr10plus_tool
-          cargo build --release
+          cargo install --path .
           
-      - uses: actions/checkout@v4
-      - uses: ilammy/setup-nasm@v1
       - run: git fetch --prune --unshallow
       - name: Ubuntu/Mac OS X
         run: |
