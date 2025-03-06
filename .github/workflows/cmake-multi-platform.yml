@@ -64,11 +64,11 @@ jobs:
           cd hdr10plus_tool
           cargo build --release
           
-      - run: git fetch --prune --unshallow
+      - run: git fetch --prune --unshallow 
       - name: Ubuntu/Mac OS X
         run: |
           cd Build/linux
-          ./build.sh jobs=$(nproc) cc=clang cxx=clang++ enable-lto static native
+          ./build.sh jobs=$(nproc) cc=clang cxx=clang++ enable-lto static native enable-hdr10plus enable-dovi
       - name: Test
         uses: actions/upload-artifact@v4
         with:
