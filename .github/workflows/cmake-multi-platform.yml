@@ -30,7 +30,7 @@ jobs:
       - run: |
           cd dovi_tool/dolby_vision
           cargo install cargo-c
-          cargo cinstall --release
+          sudo -E env PATH=$PATH cargo cinstall --release
           cd ~
           cd hdr10plus_tool
           cargo install --path .
