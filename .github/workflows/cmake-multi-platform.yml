@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/setup-nasm@v1
-      
+
       - name: Clone DOVI
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
         with:
@@ -43,7 +43,7 @@ jobs:
       - run: |
           sudo apt install libfontconfig1-dev
           cd fontconfig-rs
-          cargo install --path .
+          cargo build --release
 
       - name: Clone HDR10+
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
@@ -57,7 +57,7 @@ jobs:
           toolchain: stable
       - run: |
           cd hdr10plus_tool
-          cargo install --path .
+          cargo build --release
           
       - run: git fetch --prune --unshallow
       - name: Ubuntu/Mac OS X
