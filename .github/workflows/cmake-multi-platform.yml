@@ -46,7 +46,7 @@ jobs:
         with:
           toolchain: stable
       - run: |
-          cd hdr10plus_tool
+          cd hdr10plus_tool/hdr10plus
           sudo -E env PATH=$PATH cargo cinstall --release --no-default-features --features internal-font
            
       - name: Ubuntu/Mac OS X
