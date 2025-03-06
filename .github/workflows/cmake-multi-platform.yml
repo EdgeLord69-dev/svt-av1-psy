@@ -64,7 +64,6 @@ jobs:
           cd hdr10plus_tool
           cargo build --release
           
-      - run: git fetch --prune --unshallow 
       - name: Ubuntu/Mac OS X
         run: |
           cd Build/linux
