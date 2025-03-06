@@ -48,8 +48,7 @@ jobs:
       - run: |
           sudo apt install libfontconfig1-dev
           cd fontconfig-rs
-          cargo build --release
-          sudo cp /home/runner/work/svt-av1-psy/svt-av1-psy/fontconfig-rs/fontconfig-sys/target/release/* /usr/local/bin
+          cargo build --release --out-dir /usr/local/bin
 
       - name: Clone HDR10+
         uses: GuillaumeFalourd/clone-github-repo-action@v2.3
@@ -63,8 +62,7 @@ jobs:
           toolchain: stable
       - run: |
           cd hdr10plus_tool
-          cargo build --release
-          sudo cp /home/runner/work/svt-av1-psy/svt-av1-psy/hdr10plus_tool/target/release/* /usr/local/bin
+          cargo build --release --out-dir /usr/local/bin
           
       - run: git fetch --prune --unshallow 
       - name: Ubuntu/Mac OS X
