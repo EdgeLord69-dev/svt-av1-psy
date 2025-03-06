@@ -42,10 +42,21 @@ jobs:
             }
     env:
       CMAKE_GENERATOR: "${{ matrix.config.generators }}"
-    steps:
+   steps:
     - uses: actions/checkout@v4
     - uses: ilammy/setup-nasm@v1
-    - run: git fetch --prune --unshallow
+    - uses: actions-rs/toolchain@v1
+    - uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          toolchain: stable
+          depth: 1
+          branch: 'main'
+          owner: 'quietvoid'
+          repository: 'dovi_tool'
+      - run: |
+          cargo install cargo-c
+          cd dovi_tool
+          cargo cinstall --release
     - name: Ubuntu/Mac OS X
       if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
       run: |
