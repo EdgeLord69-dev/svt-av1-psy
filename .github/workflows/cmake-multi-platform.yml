@@ -30,7 +30,7 @@ jobs:
       - run: |
           cd dovi_tool
           cargo install cargo-c
-          sudo cargo cinstall --release .
+          cargo cinstall --release
           cd ~
           cd hdr10plus_tool
           cargo install --path .
