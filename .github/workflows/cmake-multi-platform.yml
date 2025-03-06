@@ -2,59 +2,69 @@ name: CI build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "3.0.0-rebase" ]
   pull_request:
     branches: [ "master", "testing" ]
 
 jobs:
   build:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-              name: "Windows MSVC 64 Bit",
-              os: windows-2022,
-              environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-              generators: "Visual Studio 17 2022",
-              msvc_arch: x64
-            }
-          - {
-              name: "Ubuntu Latest",
-              os: ubuntu-latest,
-              c_compiler: gcc,
-              cpp_compiler: g++,
-            }
-          - {
-              name: "Ubuntu Latest (Clang)",
-              os: ubuntu-latest,
-              c_compiler: clang,
-              cpp_compiler: clang++,
-            }
-          - {
-              name: "Mac OS Latest arm64",
-              os: macos-latest,
-              c_compiler: clang,
-              cpp_compiler: clang++,
-              osx_arch: arm64
-            }
-    env:
-      CMAKE_GENERATOR: "${{ matrix.config.generators }}"
+    name: Ubuntu (Clang)
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: ilammy/setup-nasm@v1
-    - run: git fetch --prune --unshallow
-    - name: Ubuntu/Mac OS X
-      if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
-      run: |
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}" "-DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }}" -DNATIVE=ON -DSVT_AV1_LTO=ON -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
-        cmake --build Build --config Release --parallel $(getconf _NPROCESSORS_ONLN 2> /dev/null || nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null)
-      shell: bash
-    - name: MSVC build
-      if: contains( matrix.config.generators, 'Visual Studio' )
-      run: |
-        cmake -B Build -A "${{ matrix.config.msvc_arch }}" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON
-        cmake --build Build --config Release
-      shell: cmd
+      - name: Clone DOVI
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          owner: 'quietvoid'
+          repository: 'dovi_tool'
+          
+      - name: Compile DOVI
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - run: |
+          cd dovi_tool/dolby_vision
+          cargo install cargo-c
+          sudo -E env PATH=$PATH cargo cinstall --release
+
+      - name: Clone fontconfig
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          owner: 'yeslogic'
+          repository: 'fontconfig-rs'
+          branch: 'master'
+
+      - name: Compile fontconfig
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - run: |
+          cd fontconfig-rs
+          sudo apt install libfontconfig1-dev
+          cargo install --path .
+
+      - name: Clone HDR10+
+        uses: GuillaumeFalourd/clone-github-repo-action@v2.3
+        with:
+          owner: 'quietvoid'
+          repository: 'hdr10plus_tool'
+
+      - name: Compile HDR10+
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - run: |
+          cd hdr10plus_tool
+          cargo install --path .
+          
+      - uses: actions/checkout@v4
+      - uses: ilammy/setup-nasm@v1
+      - run: git fetch --prune --unshallow
+      - name: Ubuntu/Mac OS X
+        run: |
+          cd Build/linux
+          ./build.sh jobs=$(nproc) cc=clang cxx=clang++ enable-lto static native
+      - name: Test
+        uses: actions/upload-artifact@v4
+        with:
+          name: SvtAv1EncApp
+          path: /home/runner/work/svt-av1-psy/svt-av1-psy/Bin/Release/SvtAv1EncApp
