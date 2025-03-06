@@ -2,7 +2,7 @@ name: CI build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "3.0.0-rebase" ]
   pull_request:
     branches: [ "master", "testing" ]
 
