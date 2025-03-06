@@ -50,7 +50,7 @@ jobs:
       if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
       run: |
         cd Build/linux
-        ./build.sh jobs=$(nproc) cc=clang cxx=clang++ enable-lto static native enable-hdr10plus enable-dovi
+        ./build.sh jobs=$(nproc) cc=clang cxx=clang++ enable-lto static native enable-hdr10plus
     - name: Test
       uses: actions/upload-artifact@v4
       with:
