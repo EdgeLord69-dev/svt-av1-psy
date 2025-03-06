@@ -21,7 +21,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-        run: |
+      - run: |
           cd dovi_tool
           cargo install cargo-c
           cargo cinstall --release
