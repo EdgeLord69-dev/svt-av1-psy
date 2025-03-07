@@ -46,13 +46,9 @@ jobs:
         with:
           toolchain: stable
       - run: |
-          cd hdr10plus_tool
-          cd hdr10plus
+          cd hdr10plus_tool/hdr10plus
           sudo -E env PATH=$PATH cargo cinstall --release
-          cd ..
-          cargo build --release --no-default-features --features internal-font
-          sudo cp /home/runner/work/svt-av1-psy/svt-av1-psy/hdr10plus_tool/target/release/hdr10plus_tool /usr/bin
-           
+          
       - name: Ubuntu/Mac OS X
         run: |
           cd Build/linux
