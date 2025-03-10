@@ -76,6 +76,11 @@
 #include "aom_dsp_rtcd.h"
 #include "common_dsp_rtcd.h"
 
+#if SVT_USE_MIMALLOC
+#include "mimalloc-override.h"
+#endif
+
+
 /***************************************
  * Macros
  ***************************************/
