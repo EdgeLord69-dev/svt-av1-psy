@@ -76,6 +76,11 @@
 #include "aom_dsp_rtcd.h"
 #include "common_dsp_rtcd.h"
 
+#if SVT_USE_MIMALLOC
+#include "mimalloc-override.h"
+#endif
+
+
 /***************************************
  * Macros
  ***************************************/
@@ -5046,6 +5051,12 @@ static void copy_api_from_app(
 	
     // Low Q taper
     scs->static_config.low_q_taper = config_struct->low_q_taper;
+
+    // Sharp TX
+    scs->static_config.sharp_tx = config_struct->sharp_tx;
+
+    // HBD-MD
+    scs->static_config.hbd_md = config_struct->hbd_md;
 
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
