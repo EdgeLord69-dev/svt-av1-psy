@@ -232,6 +232,8 @@
 #define SHARP_TX_TOKEN "--sharp-tx"
 #define HBD_MD_TOKEN "--hbd-md"
 
+#define LOW_Q_TAPER_TOKEN "--low-q-taper"
+
 static EbErrorType validate_error(EbErrorType err, const char *token, const char *value) {
     switch (err) {
     case EB_ErrorNone: return EB_ErrorNone;
@@ -1344,6 +1346,10 @@ ConfigEntry config_entry_psy[] = {
      HBD_MD_TOKEN,
      "[PSY] High Bit-Depth Mode Decision, default is 0 [0: default preset behavior, 1 = 10-bit, 2 = hybrid 8/10-bit, 3 = 8-bit]",
      set_cfg_generic_token},
+    {SINGLE_INPUT,
+     LOW_Q_TAPER_TOKEN,
+     "Low q taper. If macroblocks are boosted below q15, taper the effect. Default is 0 (off).]",
+     set_cfg_generic_token},
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1566,6 +1572,9 @@ ConfigEntry config_entry[] = {
 
     // Spy rd
     {SINGLE_INPUT, SPY_RD_TOKEN, "SpyRd", set_cfg_generic_token},
+	
+	// Low q taper
+    {SINGLE_INPUT, LOW_Q_TAPER_TOKEN, "LowQTaper", set_cfg_generic_token},
 
     // Sharp TX
     {SINGLE_INPUT, SHARP_TX_TOKEN, "SharpTX", set_cfg_generic_token},

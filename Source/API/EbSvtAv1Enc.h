@@ -1113,11 +1113,18 @@ typedef struct EbSvtAv1EncConfiguration {
      */
      Bool hbd_md;
 
+     /** 
+     * @brief Prevent macroblocks from being boosted to very low q.
+     *
+     * Default is 0. 0 = off, 1 = on.
+     */
+    Bool low_q_taper;
+  
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
 #if CLN_LP_LVLS
-    uint8_t padding[128 - 6 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(uint32_t) - sizeof(double)];
+    uint8_t padding[128 - 7 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(uint32_t) - sizeof(double)];
 #else
-    uint8_t padding[128 - 6 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(double)];
+    uint8_t padding[128 - 7 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(double)];
 #endif
 
 } EbSvtAv1EncConfiguration;
