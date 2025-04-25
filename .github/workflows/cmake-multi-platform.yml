@@ -2,7 +2,7 @@ name: CI build
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "testing-bob-mimalloc" ]
   pull_request:
     branches: [ "master", "testing" ]
 
@@ -49,7 +49,7 @@ jobs:
     - name: Ubuntu/Mac OS X
       if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
       run: |
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}" "-DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }}" -DNATIVE=ON -DSVT_AV1_LTO=ON -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}" "-DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }}" -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O3 -flto -pipe -march=znver2 -ffast-math" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O3 -ffast-math -flto -pipe -march=znver2" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
         cmake --build Build --config Release --parallel $(getconf _NPROCESSORS_ONLN 2> /dev/null || nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null)
       shell: bash
     - name: MSVC build
