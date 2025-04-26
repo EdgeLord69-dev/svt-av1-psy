@@ -49,8 +49,9 @@ jobs:
     - name: Ubuntu/Mac OS X
       if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
       run: |
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}" "-DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }}" -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O3 -flto -pipe -march=znver2 -ffast-math" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O3 -ffast-math -flto -pipe -march=znver2" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_CXX_COMPILER=${{ matrix.config.cpp_compiler }}" "-DCMAKE_C_COMPILER=${{ matrix.config.c_compiler }}" -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_LD_FLAGS_RELEASE="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind -Wl,-O3 -Wl,--lto-O3 -Wl,--as-needed -Wl,--gc-sections -Wl,--icf=all -Wl,--strip-all -Wl,-z,norelro -Wl,--build-id=none -Wl,--no-eh-frame-hdr -Wl,--discard-all -Wl,--relax -Wl,-z,noseparate-code" -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -O3 -march=znver2 -flto=thin -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables -stdlib=libc++" -DCMAKE_C_FLAGS_RELEASE="-Ofast -O3 -march=znver2 -flto=thin -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
         cmake --build Build --config Release --parallel $(getconf _NPROCESSORS_ONLN 2> /dev/null || nproc 2> /dev/null || sysctl -n hw.ncpu 2> /dev/null)
+        make PGOCompileGen -C build
       shell: bash
     - name: MSVC build
       if: contains( matrix.config.generators, 'Visual Studio' )
@@ -58,3 +59,16 @@ jobs:
         cmake -B Build -A "${{ matrix.config.msvc_arch }}" -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON
         cmake --build Build --config Release
       shell: cmd
+    - uses:  GuillaumeFalourd/clone-github-repo-action@v2.3
+      with:
+        depth: 1
+        branch: 'main'
+        owner: 'EdgeLord69-dev'
+        repository: 'pgo'
+    - name: PGO
+      run: |
+        cd pgo
+        python3 encode.py --svt-repo ../
+        
+      
+      
