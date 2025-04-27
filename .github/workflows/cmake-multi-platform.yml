@@ -10,36 +10,6 @@ jobs:
   build:
     name: Ubuntu Latest (Clang)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-              name: "Windows MSVC 64 Bit",
-              os: windows-2022,
-              environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-              generators: "Visual Studio 17 2022",
-              msvc_arch: x64
-            }
-          - {
-              name: "Ubuntu Latest",
-              os: ubuntu-latest,
-              c_compiler: gcc,
-              cpp_compiler: g++,
-            }
-          - {
-              name: "Ubuntu Latest (Clang)",
-              os: ubuntu-latest,
-              c_compiler: clang,
-              cpp_compiler: clang++,
-            }
-          - {
-              name: "Mac OS Latest arm64",
-              os: macos-latest,
-              c_compiler: clang,
-              cpp_compiler: clang++,
-              osx_arch: arm64
-            }
     steps:
     - uses: actions/checkout@v4
     - uses: ilammy/setup-nasm@v1
