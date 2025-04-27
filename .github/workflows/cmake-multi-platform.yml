@@ -29,7 +29,8 @@ jobs:
     - name: PGO
       run: |
         cd pgo
-        ls ../
+        sudo apt update && sudo apt update -qq && sudo apt upgrade
+        sudo apt install python3 ffmpeg
         curl -O https://media.xiph.org/video/derf/objective-1-fast.tar.gz
         tar -xvf objective-1-fast.tar.gz
         python3 encode.py --svt-repo ../
