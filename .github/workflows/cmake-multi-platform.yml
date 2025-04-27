@@ -67,7 +67,7 @@ jobs:
     - name: PGO
       run: |
         cd pgo
-        wget https://media.xiph.org/video/derf/objective-1.tar.gz
+        curl https://media.xiph.org/video/derf/objective-1-fast.tar.gz -o objective-1.tar.gz
         tar -xvf objective-1-fast.tar.gz
         python3 encode.py --svt-repo ../
         
