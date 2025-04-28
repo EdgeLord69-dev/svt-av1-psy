@@ -17,7 +17,6 @@ jobs:
     - name: Ubuntu/Mac OS X
       run: |
         mkdir pgodata
-        mkdir Build
         cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_LD_FLAGS_RELEASE="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind -Wl,-O2 -Wl,--lto-O2 -Wl,--as-needed -Wl,--gc-sections -Wl,--icf=all -Wl,--strip-all -Wl,-z,norelro -Wl,--build-id=none -Wl,--no-eh-frame-hdr -Wl,--discard-all -Wl,--relax -Wl,-z,noseparate-code" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables -stdlib=libc++ -fprofile-generate=pgodata" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables -fprofile-generate=pgodata" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON
         cmake --build Build --config Release
       shell: bash
