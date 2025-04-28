@@ -17,10 +17,9 @@ jobs:
     - name: Ubuntu/Mac OS X
       run: |
         mkdir pgodata
-        mkdir svt_build
-        cd svt_build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_LD_FLAGS_RELEASE="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind -Wl,-O3 -Wl,--lto-O3 -Wl,--as-needed -Wl,--gc-sections -Wl,--icf=all -Wl,--strip-all -Wl,-z,norelro -Wl,--build-id=none -Wl,--no-eh-frame-hdr -Wl,--discard-all -Wl,--relax -Wl,-z,noseparate-code" -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables -stdlib=libc++" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON -DBUILD_DEC=OFF -DREPRODUCIBLE_BUILDS=ON
-        make -j $(nproc)
+        mkdir build
+        cmake --fresh -B build -DBUILD_SHARED_LIBS=OFF -DBUILD_APPS=ON -DSVT_AV1_PGO=ON -DENABLE_AVX512=ON -DCMAKE_BUILD_TYPE=Release -DSVT_AV1_LTO=OFF -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -fprofile-generate="pgodata" -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables -stdlib=libc++" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -fprofile-generate="pgodata" -O2 -march=znver2 -flto -pipe -funroll-loops -fno-math-errno -ffast-math -fomit-frame-pointer -fno-semantic-interposition -fno-stack-protector -fno-stack-clash-protection -fno-sanitize=all -fno-dwarf2-cfi-asm -fno-plt -ffp-contract=fast -fno-pic -fno-pie -fno-exceptions -fno-signed-zeros -fstrict-aliasing -fstrict-overflow -fno-zero-initialized-in-bss -fno-common -fwhole-program-vtables" -DCMAKE_LD_FLAGS_RELEASE="-fuse-ld=lld -rtlib=compiler-rt -unwindlib=libunwind -Wl,-O2 -Wl,--lto-O2 -Wl,--as-needed -Wl,--gc-sections -Wl,--icf=all -Wl,--strip-all -Wl,-z,norelro -Wl,--build-id=none -Wl,--no-eh-frame-hdr -Wl,--discard-all -Wl,--relax -Wl,-z,noseparate-code" -DNATIVE=OFF
+        cmake --build build --config Release
       shell: bash
     - uses:  GuillaumeFalourd/clone-github-repo-action@v2.3
       with:
@@ -37,6 +36,7 @@ jobs:
         tar -xvf objective-1-fast.tar.gz
         rm -rf objective-1-fast.tar.gz
         python3 encode.py --svt-repo ../
+        ls ../pgodata
       shell: bash
         
       
