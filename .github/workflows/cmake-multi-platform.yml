@@ -30,7 +30,7 @@ jobs:
       run: |
         cd pgo
         sudo apt update && sudo apt update -qq && sudo apt upgrade
-        sudo apt install python3 python3-pip ffmpeg7
+        sudo apt install python3 python3-pip ffmpeg
         curl -O https://media.xiph.org/video/derf/objective-1-fast.tar.gz
         tar -xvf objective-1-fast.tar.gz
         rm -rf objective-1-fast.tar.gz
