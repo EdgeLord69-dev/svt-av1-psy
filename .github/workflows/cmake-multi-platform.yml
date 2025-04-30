@@ -35,7 +35,7 @@ jobs:
     - name: Ubuntu/Mac OS X
       run: |
         mkdir IRpgo
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -stdlib=libc++ -fprofile-generate=IRpgo" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -fprofile-generate=IRpgo" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -stdlib=libc++ -fprofile-generate=IRpgo" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -fprofile-generate=IRpgo" -DSVT_AV1_LTO=ON -DBUILD_APPS=ON
         cmake --build Build --config Release
       shell: bash
     - uses:  GuillaumeFalourd/clone-github-repo-action@v2.3
@@ -46,38 +46,42 @@ jobs:
         repository: 'pgo'
     - name: IR PGO
       run: |
+        cd pgo
         sudo apt update && sudo apt update -qq && sudo apt upgrade
         sudo apt install python3 python3-pip ffmpeg
         curl -O https://media.xiph.org/video/derf/objective-1.tar.gz
         tar -xvf objective-1.tar.gz
         rm -rf objective-1.tar.gz
-        python3 pgo/encode.py --svt-repo ../
+        python3 encode.py --svt-repo ../
         rm -rf objective-1
         curl -O https://media.xiph.org/video/derf/objective-2-slow.tar.gz
         tar -xvf objective-2-slow.tar.gz
         rm -rf objective-2-slow.tar.gz
-        python3 pgo/encode.py --svt-repo ../
+        python3 encode.py --svt-repo ../
         rm -rf objective-2-slow
-        ls ../IRpgo
+        cd ..
+        ls IRpgo
         llvm-profdata merge IRpgo/*.profraw -output=IR.profdata
       shell: bash
 
     - name: CSIR PGO
       run: |
         mkdir CSIRpgo
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -stdlib=libc++ -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -stdlib=libc++ -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
         cmake --build Build --config Release
+        cd pgo
         curl -O https://media.xiph.org/video/derf/objective-1.tar.gz
         tar -xvf objective-1.tar.gz
         rm -rf objective-1.tar.gz
-        python3 pgo/encode.py --svt-repo ../
+        python3 encode.py --svt-repo ../
         rm -rf objective-1
         curl -O https://media.xiph.org/video/derf/objective-2-slow.tar.gz
         tar -xvf objective-2-slow.tar.gz
         rm -rf objective-2-slow.tar.gz
-        python3 pgo/encode.py --svt-repo ../
+        python3 encode.py --svt-repo ../
         rm -rf objective-2-slow
-        ls ../pgodata
+        cd ..
+        ls CSIRpgo
         llvm-profdata merge CSIRpgo/*.profraw IR.profdata -output=CSIR.profdata
 
     - name: Build Final binary
