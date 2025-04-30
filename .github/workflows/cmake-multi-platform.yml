@@ -54,11 +54,6 @@ jobs:
         rm -rf objective-1.tar.gz
         python3 encode.py --svt-repo ../
         rm -rf objective-1
-        curl -O https://media.xiph.org/video/derf/objective-2-slow.tar.gz
-        tar -xvf objective-2-slow.tar.gz
-        rm -rf objective-2-slow.tar.gz
-        python3 encode.py --svt-repo ../
-        rm -rf objective-2-slow
         cd ..
         ls IRpgo
         llvm-profdata merge IRpgo/*.profraw -output=IR.profdata
@@ -75,11 +70,6 @@ jobs:
         rm -rf objective-1.tar.gz
         python3 encode.py --svt-repo ../
         rm -rf objective-1
-        curl -O https://media.xiph.org/video/derf/objective-2-slow.tar.gz
-        tar -xvf objective-2-slow.tar.gz
-        rm -rf objective-2-slow.tar.gz
-        python3 encode.py --svt-repo ../
-        rm -rf objective-2-slow
         cd ..
         ls CSIRpgo
         llvm-profdata merge CSIRpgo/*.profraw IR.profdata -output=CSIR.profdata
