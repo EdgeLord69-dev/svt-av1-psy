@@ -35,7 +35,7 @@ jobs:
     - name: Ubuntu/Mac OS X
       run: |
         mkdir IRpgo
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -stdlib=libc++ -fprofile-generate=IRpgo -mllvm -vp-counters-per-site=16" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -fprofile-generate=IRpgo -mllvm -vp-counters-per-site=16" -DSVT_AV1_LTO=ON -DBUILD_APPS=ON
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -stdlib=libc++ -fprofile-generate="IRpgo/" -mllvm -vp-counters-per-site=16" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto=thin -ffast-math -fprofile-generate="IRpgo/" -mllvm -vp-counters-per-site=16" -DSVT_AV1_LTO=ON -DBUILD_APPS=ON
         cmake --build Build --config Release
       shell: bash
     - uses:  GuillaumeFalourd/clone-github-repo-action@v2.3
@@ -62,7 +62,7 @@ jobs:
     - name: CSIR PGO
       run: |
         mkdir CSIRpgo
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -stdlib=libc++ -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -fprofile-use="IR.profdata -fcs-profile-generate="CSIRpgo"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -stdlib=libc++ -fprofile-use="./IR.profdata" -fcs-profile-generate="CSIRpgo/"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -ffast-math -fprofile-use="./IR.profdata" -fcs-profile-generate="CSIRpgo/"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
         cmake --build Build --config Release
         cd pgo
         curl -O https://media.xiph.org/video/derf/objective-1-fast.tar.gz
@@ -76,7 +76,7 @@ jobs:
 
     - name: Build Final binary
       run: |
-        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -stdlib=libc++ -fprofile-use="CSIR.profdata"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -fprofile-use="CSIR.profdata"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
+        cmake --fresh -B Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DNATIVE=OFF -DENABLE_AVX512=ON -DCMAKE_CXX_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -stdlib=libc++ -fprofile-use="./CSIR.profdata"" -DCMAKE_C_FLAGS_RELEASE="-DNDEBUG -O2 -march=znver2 -flto -ffast-math -fprofile-use="./CSIR.profdata"" -DSVT_AV1_LTO=OFF -DBUILD_APPS=ON
         cmake --build Build --config Release
         
         
